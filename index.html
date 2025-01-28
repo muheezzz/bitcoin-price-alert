@@ -18,6 +18,9 @@
     #priceInfo {
       margin-top: 20px;
     }
+    #thresholds {
+      margin-top: 20px;
+    }
     button {
       margin-top: 10px;
       padding: 10px 20px;
@@ -36,6 +39,13 @@
     <br><br>
     <button type="submit">Set Alerts</button>
   </form>
+
+  <div id="thresholds">
+    <p><strong>Current Thresholds:</strong></p>
+    <p>High: <span id="currentHigh">Not set</span></p>
+    <p>Low: <span id="currentLow">Not set</span></p>
+    <button id="clearThresholds">Clear Thresholds</button>
+  </div>
 
   <div id="priceInfo">
     <p><strong>Current Price:</strong> <span id="currentPrice">Loading...</span></p>

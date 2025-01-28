@@ -8,6 +8,13 @@ document.getElementById('priceForm').addEventListener('submit', function (e) {
     return;
   }
 
+  // Save thresholds to localStorage
+  localStorage.setItem('highPrice', highPrice);
+  localStorage.setItem('lowPrice', lowPrice);
+
+  // Update the displayed thresholds
+  updateThresholdDisplay(highPrice, lowPrice);
+
   // Fetch Bitcoin price every 10 seconds
   setInterval(() => checkBitcoinPrice(highPrice, lowPrice), 10000);
 });
@@ -16,13 +23,27 @@ document.getElementById('refreshButton').addEventListener('click', function () {
   fetchBitcoinPrice();
 });
 
-// Load daily high and low from localStorage (if they exist)
-let dailyHigh = parseFloat(localStorage.getItem('dailyHigh')) || null;
-let dailyLow = parseFloat(localStorage.getItem('dailyLow')) || null;
+document.getElementById('clearThresholds').addEventListener('click', function () {
+  // Remove thresholds from localStorage
+  localStorage.removeItem('highPrice');
+  localStorage.removeItem('lowPrice');
 
-// Display saved values on page load
-document.getElementById('dailyHigh').textContent = dailyHigh ? `$${dailyHigh}` : 'Loading...';
-document.getElementById('dailyLow').textContent = dailyLow ? `$${dailyLow}` : 'Loading...';
+  // Update the displayed thresholds to "Not set"
+  updateThresholdDisplay(null, null);
+
+  // Clear any active alerts
+  document.getElementById('alert').textContent = '';
+});
+
+// Load thresholds from localStorage on page load
+let highPrice = parseFloat(localStorage.getItem('highPrice')) || null;
+let lowPrice = parseFloat(localStorage.getItem('lowPrice')) || null;
+
+// Update the displayed thresholds on page load
+updateThresholdDisplay(highPrice, lowPrice);
+
+let dailyHigh = null;
+let dailyLow = null;
 
 async function fetchBitcoinPrice() {
   try {
@@ -33,11 +54,9 @@ async function fetchBitcoinPrice() {
     // Update daily high and low
     if (dailyHigh === null || currentPrice > dailyHigh) {
       dailyHigh = currentPrice;
-      localStorage.setItem('dailyHigh', dailyHigh); // Save to localStorage
     }
     if (dailyLow === null || currentPrice < dailyLow) {
       dailyLow = currentPrice;
-      localStorage.setItem('dailyLow', dailyLow); // Save to localStorage
     }
 
     // Update the UI
@@ -62,6 +81,11 @@ async function checkBitcoinPrice(highPrice, lowPrice) {
   } else {
     alertDiv.textContent = '';
   }
+}
+
+function updateThresholdDisplay(highPrice, lowPrice) {
+  document.getElementById('currentHigh').textContent = highPrice ? `$${highPrice}` : 'Not set';
+  document.getElementById('currentLow').textContent = lowPrice ? `$${lowPrice}` : 'Not set';
 }
 
 // Initial fetch
