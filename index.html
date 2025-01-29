@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Bitcoin Price Alert</title>
   <style>
+    /* General body styling */
     body {
       font-family: 'Arial', sans-serif;
       background: linear-gradient(135deg, #1e3c72, #2a5298);
@@ -12,29 +13,75 @@
       text-align: center;
       margin: 0;
       padding: 20px;
-      height: 100vh;
+      min-height: 100vh; /* Changed from height to min-height */
       display: flex;
       flex-direction: column;
       justify-content: center;
       align-items: center;
+      overflow: auto; /* Changed from hidden to auto */
     }
+
+    /* Fun animated background */
+    body::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 10%, transparent 10.01%);
+      background-size: 20px 20px;
+      animation: moveBackground 10s linear infinite;
+      z-index: -1;
+    }
+
+    @keyframes moveBackground {
+      0% {
+        transform: translateY(0) translateX(0);
+      }
+      100% {
+        transform: translateY(-100%) translateX(-100%);
+      }
+    }
+
+    /* Header styling with animation */
     h1 {
-      font-size: 2.5rem;
+      font-size: 3rem;
       margin-bottom: 20px;
       text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+      animation: float 3s ease-in-out infinite;
     }
+
+    @keyframes float {
+      0%, 100% {
+        transform: translateY(0);
+      }
+      50% {
+        transform: translateY(-10px);
+      }
+    }
+
+    /* Form styling with hover effects */
     #priceForm {
       background: rgba(255, 255, 255, 0.1);
       padding: 20px;
       border-radius: 10px;
       box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
       margin-bottom: 20px;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
+
+    #priceForm:hover {
+      transform: scale(1.05);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+    }
+
     label {
       display: block;
       margin: 10px 0 5px;
       font-size: 1.1rem;
     }
+
     input[type="number"] {
       width: 200px;
       padding: 10px;
@@ -42,7 +89,14 @@
       border-radius: 5px;
       font-size: 1rem;
       margin-bottom: 10px;
+      transition: box-shadow 0.3s ease;
     }
+
+    input[type="number"]:focus {
+      box-shadow: 0 0 10px rgba(255, 111, 97, 0.8);
+    }
+
+    /* Button styling with pulse animation */
     button {
       background: #ff6f61;
       color: #fff;
@@ -51,11 +105,25 @@
       font-size: 1rem;
       border-radius: 5px;
       cursor: pointer;
-      transition: background 0.3s ease;
+      transition: background 0.3s ease, transform 0.3s ease;
+      animation: pulse 2s infinite;
     }
+
     button:hover {
       background: #ff3b2f;
+      transform: scale(1.1);
     }
+
+    @keyframes pulse {
+      0%, 100% {
+        transform: scale(1);
+      }
+      50% {
+        transform: scale(1.05);
+      }
+    }
+
+    /* Thresholds and price info styling */
     #thresholds, #priceInfo {
       background: rgba(255, 255, 255, 0.1);
       padding: 15px;
@@ -63,20 +131,56 @@
       box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
       margin: 10px 0;
       width: 300px;
+      transition: transform 0.3s ease;
     }
+
+    #thresholds:hover, #priceInfo:hover {
+      transform: scale(1.05);
+    }
+
+    /* Alert styling with glowing effect */
     #alert {
       color: #ff6f61;
       font-weight: bold;
       font-size: 1.2rem;
       margin-top: 20px;
       text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+      animation: glow 1.5s infinite alternate;
     }
+
+    @keyframes glow {
+      0% {
+        text-shadow: 0 0 5px #ff6f61, 0 0 10px #ff6f61, 0 0 15px #ff6f61;
+      }
+      100% {
+        text-shadow: 0 0 10px #ff6f61, 0 0 20px #ff6f61, 0 0 30px #ff6f61;
+      }
+    }
+
+    /* Price info text styling */
     #currentPrice, #dailyHigh, #dailyLow {
       font-weight: bold;
       color: #ff6f61;
     }
+
+    /* Refresh button styling */
     #refreshButton {
       margin-top: 20px;
+    }
+
+    /* Mobile responsiveness */
+    @media (max-width: 600px) {
+      h1 {
+        font-size: 2rem;
+      }
+
+      #priceForm, #thresholds, #priceInfo {
+        width: 90%;
+      }
+
+      input[type="number"] {
+        width: 100%;
+      }
     }
   </style>
 </head>
