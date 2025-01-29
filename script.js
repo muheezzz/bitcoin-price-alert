@@ -1,3 +1,24 @@
+// Request permission for notifications
+function requestNotificationPermission() {
+  if (Notification.permission !== 'granted') {
+    Notification.requestPermission().then(permission => {
+      if (permission === 'granted') {
+        console.log('Notification permission granted.');
+      }
+    });
+  }
+}
+
+// Send a desktop notification
+function sendNotification(message) {
+  if (Notification.permission === 'granted') {
+    new Notification('Bitcoin Price Alert', {
+      body: message,
+      icon: 'https://cdn-icons-png.flaticon.com/512/1490/1490849.png', // Optional: Add an icon
+    });
+  }
+}
+
 document.getElementById('priceForm').addEventListener('submit', function (e) {
   e.preventDefault();
   const highPrice = parseFloat(document.getElementById('highPrice').value);
@@ -75,9 +96,13 @@ async function checkBitcoinPrice(highPrice, lowPrice) {
 
   const alertDiv = document.getElementById('alert');
   if (currentPrice > highPrice) {
-    alertDiv.textContent = `Alert: Bitcoin is above $${highPrice}! Current price: $${currentPrice}`;
+    const message = `Bitcoin is above $${highPrice}! Current price: $${currentPrice}`;
+    alertDiv.textContent = `Alert: ${message}`;
+    sendNotification(message); // Send desktop notification
   } else if (currentPrice < lowPrice) {
-    alertDiv.textContent = `Alert: Bitcoin is below $${lowPrice}! Current price: $${currentPrice}`;
+    const message = `Bitcoin is below $${lowPrice}! Current price: $${currentPrice}`;
+    alertDiv.textContent = `Alert: ${message}`;
+    sendNotification(message); // Send desktop notification
   } else {
     alertDiv.textContent = '';
   }
@@ -87,6 +112,9 @@ function updateThresholdDisplay(highPrice, lowPrice) {
   document.getElementById('currentHigh').textContent = highPrice ? `$${highPrice}` : 'Not set';
   document.getElementById('currentLow').textContent = lowPrice ? `$${lowPrice}` : 'Not set';
 }
+
+// Request notification permission when the page loads
+window.onload = requestNotificationPermission;
 
 // Initial fetch
 fetchBitcoinPrice();
