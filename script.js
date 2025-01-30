@@ -66,6 +66,46 @@ updateThresholdDisplay(highPrice, lowPrice);
 let dailyHigh = null;
 let dailyLow = null;
 
+const priceData = []; // Store last 10 prices
+const labels = [];    // Store timestamps for the chart
+
+// Initialize Chart.js
+const ctx = document.getElementById('priceChart').getContext('2d');
+const priceChart = new Chart(ctx, {
+  type: 'line',
+  data: {
+    labels: labels,
+    datasets: [{
+      label: 'Bitcoin Price (USD)',
+      data: priceData,
+      borderColor: '#ff6f61',
+      borderWidth: 2,
+      fill: false,
+      tension: 0.1,
+    }]
+  },
+  options: {
+    responsive: true,
+    scales: {
+      x: { title: { display: true, text: 'Time' } },
+      y: { title: { display: true, text: 'Price (USD)' } }
+    }
+  }
+});
+
+// Update chart data
+function updateChart(newPrice) {
+  const timestamp = new Date().toLocaleTimeString();
+  if (priceData.length >= 10) {
+    priceData.shift();  // Remove the oldest price
+    labels.shift();     // Remove the oldest timestamp
+  }
+  priceData.push(newPrice);
+  labels.push(timestamp);
+
+  priceChart.update();
+}
+
 async function fetchBitcoinPrice() {
   try {
     const response = await fetch('https://api.coindesk.com/v1/bpi/currentprice/BTC.json');
@@ -84,6 +124,9 @@ async function fetchBitcoinPrice() {
     document.getElementById('currentPrice').textContent = `$${currentPrice}`;
     document.getElementById('dailyHigh').textContent = `$${dailyHigh}`;
     document.getElementById('dailyLow').textContent = `$${dailyLow}`;
+
+    // Update chart
+    updateChart(currentPrice);
 
     return currentPrice;
   } catch (error) {
