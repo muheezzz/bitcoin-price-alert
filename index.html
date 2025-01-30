@@ -138,6 +138,11 @@
       transform: scale(1.05);
     }
 
+    /* Chart styling */
+    #priceChartSection {
+      margin-top: 20px;
+    }
+
     /* Alert styling with glowing effect */
     #alert {
       color: #ff6f61;
@@ -157,24 +162,13 @@
       }
     }
 
-    /* Price info text styling */
-    #currentPrice, #dailyHigh, #dailyLow {
-      font-weight: bold;
-      color: #ff6f61;
-    }
-
-    /* Refresh button styling */
-    #refreshButton {
-      margin-top: 20px;
-    }
-
     /* Mobile responsiveness */
     @media (max-width: 600px) {
       h1 {
         font-size: 2rem;
       }
 
-      #priceForm, #thresholds, #priceInfo {
+      #priceForm, #thresholds, #priceInfo, #priceChartSection {
         width: 90%;
       }
 
@@ -210,8 +204,14 @@
     <button id="refreshButton">Reload Price</button>
   </div>
 
+  <div id="priceChartSection">
+    <h2>Bitcoin Price Trends</h2>
+    <canvas id="priceChart" width="400" height="200"></canvas>
+  </div>
+
   <div id="alert"></div>
 
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="script.js"></script>
 </body>
 </html>
