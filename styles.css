@@ -1,0 +1,51 @@
+/* styles.css */
+#predictionGame {
+  background: rgba(255, 255, 255, 0.1);
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  margin-top: 20px;
+  transition: transform 0.3s ease;
+}
+
+#predictionGame:hover {
+  transform: scale(1.05);
+}
+
+#predictUp, #predictDown {
+  background: #4CAF50;
+  margin: 5px;
+  animation: pulse 2s infinite;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  font-size: 1rem;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.3s ease;
+}
+
+#predictDown {
+  background: #f44336;
+}
+
+#predictUp:hover, #predictDown:hover {
+  transform: scale(1.1);
+}
+
+#gameResult {
+  font-size: 1.2rem;
+  font-weight: bold;
+  margin-top: 10px;
+  color: #ff6f61;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}

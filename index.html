@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Bitcoin Price Alert</title>
+  <link rel="stylesheet" href="styles.css"> <!-- Link to the CSS file -->
   <style>
     /* General body styling */
     body {
@@ -13,12 +14,12 @@
       text-align: center;
       margin: 0;
       padding: 20px;
-      min-height: 100vh; /* Changed from height to min-height */
+      min-height: 100vh;
       display: flex;
       flex-direction: column;
       justify-content: center;
       align-items: center;
-      overflow: auto; /* Changed from hidden to auto */
+      overflow: auto;
     }
 
     /* Fun animated background */
@@ -114,15 +115,6 @@
       transform: scale(1.1);
     }
 
-    @keyframes pulse {
-      0%, 100% {
-        transform: scale(1);
-      }
-      50% {
-        transform: scale(1.05);
-      }
-    }
-
     /* Thresholds and price info styling */
     #thresholds, #priceInfo {
       background: rgba(255, 255, 255, 0.1);
@@ -207,6 +199,15 @@
   <div id="priceChartSection">
     <h2>Bitcoin Price Trends</h2>
     <canvas id="priceChart" width="400" height="200"></canvas>
+  </div>
+
+  <!-- Prediction Game Section -->
+  <div id="predictionGame">
+    <h2>Bitcoin Price Prediction Game</h2>
+    <p>Will the price go <strong>up</strong> or <strong>down</strong> in the next 10 seconds?</p>
+    <button id="predictUp">Up 🚀</button>
+    <button id="predictDown">Down 📉</button>
+    <p id="gameResult"></p>
   </div>
 
   <div id="alert"></div>

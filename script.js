@@ -156,6 +156,41 @@ function updateThresholdDisplay(highPrice, lowPrice) {
   document.getElementById('currentLow').textContent = lowPrice ? `$${lowPrice}` : 'Not set';
 }
 
+// Prediction Game Logic
+let currentPriceAtPrediction = null;
+let predictionTimeout = null;
+
+document.getElementById('predictUp').addEventListener('click', function () {
+  startPrediction('up');
+});
+
+document.getElementById('predictDown').addEventListener('click', function () {
+  startPrediction('down');
+});
+
+function startPrediction(prediction) {
+  if (predictionTimeout) {
+    alert('A prediction is already in progress. Wait for the result!');
+    return;
+  }
+
+  currentPriceAtPrediction = parseFloat(document.getElementById('currentPrice').textContent.replace('$', ''));
+  document.getElementById('gameResult').textContent = 'Waiting for the result...';
+
+  predictionTimeout = setTimeout(() => {
+    const currentPrice = parseFloat(document.getElementById('currentPrice').textContent.replace('$', ''));
+    const result = currentPrice > currentPriceAtPrediction ? 'up' : 'down';
+
+    if (result === prediction) {
+      document.getElementById('gameResult').textContent = 'You win! 🎉';
+    } else {
+      document.getElementById('gameResult').textContent = 'You lose! 😢';
+    }
+
+    predictionTimeout = null;
+  }, 10000); // 10 seconds
+}
+
 // Request notification permission when the page loads
 window.onload = requestNotificationPermission;
 
