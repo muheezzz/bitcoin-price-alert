@@ -86,4 +86,3 @@ Contributions are welcome! If you'd like to improve this project, feel free to:
 This project is licensed under the MIT License. See the LICENSE file for details.
 
 Enjoy the game and happy coding! 🎉
-
