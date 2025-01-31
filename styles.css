@@ -1,51 +1,115 @@
 /* styles.css */
-#predictionGame {
-  background: rgba(255, 255, 255, 0.1);
+
+/* Define CSS Variables */
+:root {
+  --primary-bg: rgba(255, 255, 255, 0.1);
+  --primary-color: #ff6f61;
+  --success-color: #4CAF50;
+  --error-color: #f44336;
+  --text-color: #fff;
+  --hover-scale: 1.05;
+  --font-size-base: 1rem;
+  --font-size-large: 1.2rem;
+  --box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  --transition-speed: 0.3s ease;
+}
+
+/* General Box Styling */
+.box {
+  background: var(--primary-bg);
   padding: 20px;
   border-radius: 10px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  box-shadow: var(--box-shadow);
   margin-top: 20px;
-  transition: transform 0.3s ease;
+  transition: transform var(--transition-speed);
 }
 
-#predictionGame:hover {
-  transform: scale(1.05);
+.box:hover {
+  transform: scale(var(--hover-scale));
 }
 
-#predictUp, #predictDown {
-  background: #4CAF50;
-  margin: 5px;
-  animation: pulse 2s infinite;
-  color: #fff;
+/* Buttons */
+button {
+  background: var(--primary-color);
+  color: var(--text-color);
   border: none;
   padding: 10px 20px;
-  font-size: 1rem;
+  font-size: var(--font-size-base);
   border-radius: 5px;
   cursor: pointer;
-  transition: background 0.3s ease, transform 0.3s ease;
+  transition: background var(--transition-speed), transform var(--transition-speed);
+  animation: pulse 2s infinite;
+}
+
+button:hover {
+  background: darken(var(--primary-color), 10%);
+  transform: scale(var(--hover-scale));
+}
+
+/* Specific Buttons */
+#predictUp {
+  background: var(--success-color);
 }
 
 #predictDown {
-  background: #f44336;
+  background: var(--error-color);
 }
 
 #predictUp:hover, #predictDown:hover {
-  transform: scale(1.1);
+  background: darken(var(--success-color), 10%);
 }
 
-#gameResult {
-  font-size: 1.2rem;
-  font-weight: bold;
-  margin-top: 10px;
-  color: #ff6f61;
-  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
-}
-
+/* Pulse Animation */
 @keyframes pulse {
   0%, 100% {
     transform: scale(1);
   }
   50% {
     transform: scale(1.05);
+  }
+}
+
+/* Prediction Game */
+#predictionGame {
+  @apply .box;
+}
+
+#gameResult {
+  font-size: var(--font-size-large);
+  font-weight: bold;
+  margin-top: 10px;
+  color: var(--primary-color);
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+/* Fun Fact Section */
+#funFactSection {
+  @apply .box;
+}
+
+#funFact {
+  font-size: 1.1rem;
+  font-style: italic;
+  margin: 10px 0;
+  color: var(--text-color);
+}
+
+#newFactButton {
+  background: var(--primary-color);
+}
+
+#newFactButton:hover {
+  background: darken(var(--primary-color), 10%);
+}
+
+/* Responsive Styles */
+@media (max-width: 600px) {
+  button {
+    padding: 8px 16px;
+    font-size: 0.9rem;
+  }
+
+  #gameResult, #funFact {
+    font-size: 1rem;
   }
 }

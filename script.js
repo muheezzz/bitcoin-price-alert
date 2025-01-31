@@ -191,6 +191,34 @@ function startPrediction(prediction) {
   }, 10000); // 10 seconds
 }
 
+// Bitcoin Fun Facts
+const bitcoinFacts = [
+  'Bitcoin was created in 2009 by an unknown person or group using the pseudonym Satoshi Nakamoto.',
+  'The smallest unit of Bitcoin is called a Satoshi, named after its creator.',
+  'There will only ever be 21 million Bitcoins in existence.',
+  'The first real-world Bitcoin transaction was for two pizzas, which cost 10,000 BTC in 2010.',
+  'Bitcoin is decentralized, meaning no single entity controls it.',
+  'El Salvador became the first country to adopt Bitcoin as legal tender in 2021.',
+  'The Bitcoin network consumes a significant amount of energy, comparable to some small countries.',
+  'Bitcoin transactions are irreversible once confirmed.',
+  'The Bitcoin whitepaper is only 9 pages long.',
+  'Bitcoin is often referred to as "digital gold."',
+];
+
+// Function to get a random fact
+function getRandomFact() {
+  const randomIndex = Math.floor(Math.random() * bitcoinFacts.length);
+  return bitcoinFacts[randomIndex];
+}
+
+// Display a random fact on page load
+document.getElementById('funFact').textContent = getRandomFact();
+
+// Add event listener for the "Get New Fact" button
+document.getElementById('newFactButton').addEventListener('click', function () {
+  document.getElementById('funFact').textContent = getRandomFact();
+});
+
 // Request notification permission when the page loads
 window.onload = requestNotificationPermission;
 
