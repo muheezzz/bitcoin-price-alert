@@ -113,3 +113,42 @@ button:hover {
     font-size: 1rem;
   }
 }
+
+/* Historical Price Data Section */
+#historicalDataSection {
+  background: rgba(255, 255, 255, 0.1);
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  margin-top: 20px;
+  transition: transform 0.3s ease;
+}
+
+#historicalDataSection:hover {
+  transform: scale(1.05);
+}
+
+#timeRange {
+  padding: 10px;
+  border-radius: 5px;
+  border: none;
+  margin: 10px;
+  font-size: 1rem;
+}
+
+#loadHistoricalData {
+  background: #ff6f61;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  font-size: 1rem;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.3s ease;
+  animation: pulse 2s infinite;
+}
+
+#loadHistoricalData:hover {
+  background: #ff3b2f;
+  transform: scale(1.1);
+}
