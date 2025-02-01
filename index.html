@@ -223,3 +223,15 @@
   <script src="script.js"></script>
 </body>
 </html>
+
+<!-- Historical Price Data Section -->
+<div id="historicalDataSection">
+  <h2>Historical Price Data</h2>
+  <label for="timeRange">Select Time Range:</label>
+  <select id="timeRange">
+    <option value="7">Last 7 Days</option>
+    <option value="30">Last 30 Days</option>
+  </select>
+  <button id="loadHistoricalData">Load Data</button>
+  <canvas id="historicalPriceChart" width="400" height="200"></canvas>
+</div>
