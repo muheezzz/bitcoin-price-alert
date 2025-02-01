@@ -224,3 +224,59 @@ window.onload = requestNotificationPermission;
 
 // Initial fetch
 fetchBitcoinPrice();
+
+// Historical Price Data Logic
+document.getElementById('loadHistoricalData').addEventListener('click', function () {
+  const timeRange = document.getElementById('timeRange').value;
+  fetchHistoricalData(timeRange);
+});
+
+async function fetchHistoricalData(days) {
+  try {
+    const response = await fetch(
+      `https://api.coingecko.com/api/v3/coins/bitcoin/market_chart?vs_currency=usd&days=${days}`
+    );
+    const data = await response.json();
+    const prices = data.prices;
+
+    // Extract dates and prices
+    const labels = prices.map(price => new Date(price[0]).toLocaleDateString());
+    const dataPoints = prices.map(price => price[1]);
+
+    // Update the historical price chart
+    updateHistoricalChart(labels, dataPoints);
+  } catch (error) {
+    console.error('Error fetching historical data:', error);
+  }
+}
+
+// Initialize Historical Price Chart
+const historicalCtx = document.getElementById('historicalPriceChart').getContext('2d');
+const historicalPriceChart = new Chart(historicalCtx, {
+  type: 'line',
+  data: {
+    labels: [],
+    datasets: [{
+      label: 'Bitcoin Price (USD)',
+      data: [],
+      borderColor: '#ff6f61',
+      borderWidth: 2,
+      fill: false,
+      tension: 0.1,
+    }]
+  },
+  options: {
+    responsive: true,
+    scales: {
+      x: { title: { display: true, text: 'Date' } },
+      y: { title: { display: true, text: 'Price (USD)' } }
+    }
+  }
+});
+
+// Update Historical Price Chart
+function updateHistoricalChart(labels, dataPoints) {
+  historicalPriceChart.data.labels = labels;
+  historicalPriceChart.data.datasets[0].data = dataPoints;
+  historicalPriceChart.update();
+}
