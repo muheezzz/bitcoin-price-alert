@@ -4,9 +4,10 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Bitcoin Price Alert</title>
-  <link rel="stylesheet" href="styles.css"> <!-- Link to the CSS file -->
+  <link rel="stylesheet" href="styles.css"> <!-- Link to external CSS -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> <!-- Include Chart.js -->
   <style>
-    /* General body styling */
+    /* Ensure the background is properly applied */
     body {
       font-family: 'Arial', sans-serif;
       background: linear-gradient(135deg, #1e3c72, #2a5298);
@@ -45,133 +46,15 @@
       }
     }
 
-    /* Header styling with animation */
-    h1 {
-      font-size: 3rem;
-      margin-bottom: 20px;
-      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-      animation: float 3s ease-in-out infinite;
-    }
-
-    @keyframes float {
-      0%, 100% {
-        transform: translateY(0);
-      }
-      50% {
-        transform: translateY(-10px);
-      }
-    }
-
-    /* Form styling with hover effects */
-    #priceForm {
-      background: rgba(255, 255, 255, 0.1);
-      padding: 20px;
-      border-radius: 10px;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-      margin-bottom: 20px;
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
-
-    #priceForm:hover {
-      transform: scale(1.05);
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
-    }
-
-    label {
-      display: block;
-      margin: 10px 0 5px;
-      font-size: 1.1rem;
-    }
-
-    input[type="number"] {
-      width: 200px;
-      padding: 10px;
-      border: none;
-      border-radius: 5px;
-      font-size: 1rem;
-      margin-bottom: 10px;
-      transition: box-shadow 0.3s ease;
-    }
-
-    input[type="number"]:focus {
-      box-shadow: 0 0 10px rgba(255, 111, 97, 0.8);
-    }
-
-    /* Button styling with pulse animation */
-    button {
-      background: #ff6f61;
-      color: #fff;
-      border: none;
-      padding: 10px 20px;
-      font-size: 1rem;
-      border-radius: 5px;
-      cursor: pointer;
-      transition: background 0.3s ease, transform 0.3s ease;
-      animation: pulse 2s infinite;
-    }
-
-    button:hover {
-      background: #ff3b2f;
-      transform: scale(1.1);
-    }
-
-    /* Thresholds and price info styling */
-    #thresholds, #priceInfo {
-      background: rgba(255, 255, 255, 0.1);
-      padding: 15px;
-      border-radius: 10px;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-      margin: 10px 0;
-      width: 300px;
-      transition: transform 0.3s ease;
-    }
-
-    #thresholds:hover, #priceInfo:hover {
-      transform: scale(1.05);
-    }
-
-    /* Chart styling */
-    #priceChartSection {
-      margin-top: 20px;
-    }
-
-    /* Alert styling with glowing effect */
-    #alert {
-      color: #ff6f61;
-      font-weight: bold;
-      font-size: 1.2rem;
-      margin-top: 20px;
-      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
-      animation: glow 1.5s infinite alternate;
-    }
-
-    @keyframes glow {
-      0% {
-        text-shadow: 0 0 5px #ff6f61, 0 0 10px #ff6f61, 0 0 15px #ff6f61;
-      }
-      100% {
-        text-shadow: 0 0 10px #ff6f61, 0 0 20px #ff6f61, 0 0 30px #ff6f61;
-      }
-    }
-
-    /* Mobile responsiveness */
-    @media (max-width: 600px) {
-      h1 {
-        font-size: 2rem;
-      }
-
-      #priceForm, #thresholds, #priceInfo, #priceChartSection {
-        width: 90%;
-      }
-
-      input[type="number"] {
-        width: 100%;
-      }
+    /* Ensure all sections are visible */
+    h1, h2, p, label, button {
+      color: white;
     }
   </style>
 </head>
 <body>
   <h1>Mo's Bitcoin Price Alert</h1>
+
   <form id="priceForm">
     <label for="highPrice">Alert me when Bitcoin goes above:</label>
     <input type="number" id="highPrice" placeholder="Enter high price" required>
@@ -217,21 +100,20 @@
     <button id="newFactButton">Get New Fact</button>
   </div>
 
+  <!-- Historical Price Data Section -->
+  <div id="historicalDataSection">
+    <h2>Historical Price Data</h2>
+    <label for="timeRange">Select Time Range:</label>
+    <select id="timeRange">
+      <option value="7">Last 7 Days</option>
+      <option value="30">Last 30 Days</option>
+    </select>
+    <button id="loadHistoricalData">Load Data</button>
+    <canvas id="historicalPriceChart" width="400" height="200"></canvas>
+  </div>
+
   <div id="alert"></div>
 
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="script.js"></script>
 </body>
 </html>
-
-<!-- Historical Price Data Section -->
-<div id="historicalDataSection">
-  <h2>Historical Price Data</h2>
-  <label for="timeRange">Select Time Range:</label>
-  <select id="timeRange">
-    <option value="7">Last 7 Days</option>
-    <option value="30">Last 30 Days</option>
-  </select>
-  <button id="loadHistoricalData">Load Data</button>
-  <canvas id="historicalPriceChart" width="400" height="200"></canvas>
-</div>
