@@ -3,52 +3,158 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Bitcoin Price Alert</title>
-  <link rel="stylesheet" href="styles.css">
+  <title>Bitcoin Price Tracker</title>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    /* General Styles */
+    body {
+      font-family: 'Arial', sans-serif;
+      background-color: #1e1e2f;
+      color: #ffffff;
+      margin: 0;
+      padding: 20px;
+    }
+
+    h1, h2 {
+      color: #ff6f61;
+    }
+
+    p {
+      color: #cccccc;
+    }
+
+    /* Container Styles */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+      background-color: #2a2a3f;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    }
+
+    .section {
+      margin-bottom: 30px;
+      padding: 20px;
+      background-color: #3a3a4f;
+      border-radius: 8px;
+    }
+
+    /* Form Styles */
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    label {
+      font-weight: bold;
+      color: #ff6f61;
+    }
+
+    input[type="number"], select {
+      padding: 8px;
+      border: 1px solid #555;
+      border-radius: 4px;
+      background-color: #2a2a3f;
+      color: #ffffff;
+    }
+
+    button {
+      padding: 10px 15px;
+      background-color: #ff6f61;
+      color: #ffffff;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #e65a50;
+    }
+
+    /* Chart Styles */
+    canvas {
+      background-color: #2a2a3f;
+      border-radius: 8px;
+      padding: 10px;
+    }
+
+    /* Fun Fact Section */
+    #funFact {
+      font-style: italic;
+      color: #ff6f61;
+    }
+
+    /* Prediction Result */
+    #predictionResult {
+      font-weight: bold;
+      color: #ff6f61;
+    }
+  </style>
 </head>
 <body>
-  <h1>🚀 Bitcoin Price Tracker & Alerts 💰</h1>
+  <div class="container">
+    <h1>Mo's Bitcoin Price Tracker</h1>
 
-  <div class="box">
-    <h2>Set Your Price Alerts</h2>
-    <form id="priceForm">
-      <label for="highPrice">🔼 Alert me when Bitcoin goes above:</label>
-      <input type="number" id="highPrice" placeholder="Enter high price" required>
-      <br>
-      <label for="lowPrice">🔽 Alert me when Bitcoin goes below:</label>
-      <input type="number" id="lowPrice" placeholder="Enter low price" required>
-      <br><br>
-      <button type="submit">Set Alerts</button>
-    </form>
-    <button id="clearThresholds">Clear Alerts</button>
-  </div>
+    <!-- Current Price Section -->
+    <div class="section">
+      <h2>Current Bitcoin Price</h2>
+      <p>Current Price: <span id="currentPrice">Loading...</span></p>
+      <p>Daily High: <span id="dailyHigh">Loading...</span></p>
+      <p>Daily Low: <span id="dailyLow">Loading...</span></p>
+    </div>
 
-  <div class="box">
-    <h2>💹 Current Price Info</h2>
-    <p>💰 <strong>Price:</strong> <span id="currentPrice">Loading...</span></p>
-    <p>📈 <strong>Daily Max:</strong> <span id="dailyHigh">Loading...</span></p>
-    <p>📉 <strong>Daily Min:</strong> <span id="dailyLow">Loading...</span></p>
-    <button id="refreshButton">🔄 Refresh Price</button>
-  </div>
+    <!-- Price Threshold Section -->
+    <div class="section">
+      <h2>Set Price Thresholds</h2>
+      <form id="priceForm">
+        <label for="highPrice">High Price:</label>
+        <input type="number" id="highPrice" step="0.01" required />
+        <label for="lowPrice">Low Price:</label>
+        <input type="number" id="lowPrice" step="0.01" required />
+        <button type="submit">Set Thresholds</button>
+      </form>
+      <p>Current High Threshold: <span id="currentHigh">Not set</span></p>
+      <p>Current Low Threshold: <span id="currentLow">Not set</span></p>
+    </div>
 
-  <div class="box">
-    <h2>📊 Bitcoin Price Trends</h2>
-    <canvas id="priceChart"></canvas>
-  </div>
+    <!-- Price Prediction Game -->
+    <div class="section">
+      <h2>Price Prediction Game</h2>
+      <form id="predictForm">
+        <label for="prediction">Predict Bitcoin Price (USD):</label>
+        <input type="number" id="prediction" step="0.01" required />
+        <button type="submit">Submit Prediction</button>
+      </form>
+      <p id="predictionResult"></p>
+    </div>
 
-  <div class="box">
-    <h2>🎲 Price Prediction Game</h2>
-    <p>Will the price go ⬆️ or ⬇️ in the next 10 seconds?</p>
-    <button id="predictUp">Up 🚀</button>
-    <button id="predictDown">Down 📉</button>
-    <p id="gameResult"></p>
-  </div>
+    <!-- Fun Facts Section -->
+    <div class="section">
+      <h2>Fun Fact</h2>
+      <p id="funFact">Loading fun fact...</p>
+    </div>
 
-  <div class="box">
-    <h2>💡 Did You Know?</h2>
-    <p id="funFact"></p>
-    <button id="newFactButton">🔄 New Fact</button>
+    <!-- Real-Time Price Trend -->
+    <div class="section">
+      <h2>Price Trend</h2>
+      <canvas id="priceChart"></canvas>
+    </div>
+
+    <!-- Historical Data Section -->
+    <div class="section">
+      <h2>Historical Data</h2>
+      <label for="timeRange">Select Time Range:</label>
+      <select id="timeRange">
+        <option value="7">7 Days</option>
+        <option value="30">30 Days</option>
+        <option value="365">1 Year</option>
+      </select>
+      <button id="loadHistoricalData">Load Historical Data</button>
+      <canvas id="historicalPriceChart"></canvas>
+    </div>
   </div>
 
   <script src="script.js"></script>
