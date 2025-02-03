@@ -24,6 +24,8 @@ let highPrice = parseFloat(localStorage.getItem('highPrice')) || null;
 let lowPrice = parseFloat(localStorage.getItem('lowPrice')) || null;
 let dailyHigh = null;
 let dailyLow = null;
+let currentPriceAtPrediction = null;
+let predictionTimeout = null;
 
 // Initialize Chart.js for real-time Bitcoin price trend
 const priceData = [];
@@ -75,8 +77,8 @@ async function fetchBitcoinPrice() {
     // Update real-time price trend chart
     const timestamp = new Date().toLocaleTimeString();
     if (priceData.length >= 10) {
-      priceData.shift(); // Remove oldest price
-      labels.shift(); // Remove oldest timestamp
+      priceData.shift();
+      labels.shift();
     }
     priceData.push(currentPrice);
     labels.push(timestamp);
@@ -88,104 +90,58 @@ async function fetchBitcoinPrice() {
   }
 }
 
-// Check price against thresholds
-async function checkBitcoinPrice() {
-  const currentPrice = await fetchBitcoinPrice();
-  const alertDiv = document.getElementById('alert');
+// Bitcoin Price Prediction Game
+document.getElementById('predictUp').addEventListener('click', () => startPrediction('up'));
+document.getElementById('predictDown').addEventListener('click', () => startPrediction('down'));
 
-  if (highPrice && currentPrice > highPrice) {
-    alertDiv.textContent = `Bitcoin is above $${highPrice}! Current price: $${currentPrice}`;
-    sendNotification(alertDiv.textContent);
-  } else if (lowPrice && currentPrice < lowPrice) {
-    alertDiv.textContent = `Bitcoin is below $${lowPrice}! Current price: $${currentPrice}`;
-    sendNotification(alertDiv.textContent);
-  } else {
-    alertDiv.textContent = '';
+function startPrediction(prediction) {
+  if (predictionTimeout) {
+    alert('A prediction is already in progress. Please wait for the result.');
+    return;
   }
+
+  currentPriceAtPrediction = parseFloat(document.getElementById('currentPrice').textContent.replace('$', ''));
+  document.getElementById('gameResult').textContent = 'Waiting for the result...';
+
+  predictionTimeout = setTimeout(async () => {
+    const currentPrice = await fetchBitcoinPrice();
+    const result = currentPrice > currentPriceAtPrediction ? 'up' : 'down';
+
+    if (result === prediction) {
+      document.getElementById('gameResult').textContent = 'You win! 🎉';
+    } else {
+      document.getElementById('gameResult').textContent = 'You lose! 😢';
+    }
+
+    predictionTimeout = null;
+  }, 10000);
 }
 
-// Set up event listeners
-document.getElementById('priceForm').addEventListener('submit', function (e) {
-  e.preventDefault();
-  highPrice = parseFloat(document.getElementById('highPrice').value);
-  lowPrice = parseFloat(document.getElementById('lowPrice').value);
+// Fun Facts Section
+const bitcoinFacts = [
+  'Bitcoin was created in 2009 by an unknown person or group using the pseudonym Satoshi Nakamoto.',
+  'The smallest unit of Bitcoin is called a Satoshi, named after its creator.',
+  'There will only ever be 21 million Bitcoins in existence.',
+  'The first real-world Bitcoin transaction was for two pizzas, which cost 10,000 BTC in 2010.',
+  'Bitcoin is decentralized, meaning no single entity controls it.',
+  'El Salvador became the first country to adopt Bitcoin as legal tender in 2021.',
+  'The Bitcoin network consumes a significant amount of energy, comparable to some small countries.',
+  'Bitcoin transactions are irreversible once confirmed.',
+  'The Bitcoin whitepaper is only 9 pages long.',
+  'Bitcoin is often referred to as "digital gold."',
+];
 
-  localStorage.setItem('highPrice', highPrice);
-  localStorage.setItem('lowPrice', lowPrice);
-  updateThresholdDisplay();
-});
+function displayRandomFact() {
+  const randomIndex = Math.floor(Math.random() * bitcoinFacts.length);
+  document.getElementById('funFact').textContent = bitcoinFacts[randomIndex];
+}
 
-// Clear thresholds
-document.getElementById('clearThresholds').addEventListener('click', function () {
-  localStorage.removeItem('highPrice');
-  localStorage.removeItem('lowPrice');
-  highPrice = null;
-  lowPrice = null;
-  updateThresholdDisplay();
-});
+document.getElementById('newFactButton').addEventListener('click', displayRandomFact);
 
-// Periodic updates
-setInterval(checkBitcoinPrice, 10000);
-
-// Request notification permission
+// Run initial setup
 window.onload = function () {
   requestNotificationPermission();
   updateThresholdDisplay();
   fetchBitcoinPrice();
+  displayRandomFact();
 };
-
-// Historical Price Data Logic
-document.getElementById('loadHistoricalData').addEventListener('click', function () {
-  const timeRange = document.getElementById('timeRange').value;
-  fetchHistoricalData(timeRange);
-});
-
-// Initialize Chart.js for historical price data
-const historicalCtx = document.getElementById('historicalPriceChart').getContext('2d');
-const historicalPriceChart = new Chart(historicalCtx, {
-  type: 'line',
-  data: {
-    labels: [],
-    datasets: [{
-      label: 'Bitcoin Historical Price (USD)',
-      data: [],
-      borderColor: '#ff6f61',
-      borderWidth: 2,
-      fill: false,
-      tension: 0.1,
-    }]
-  },
-  options: {
-    responsive: true,
-    scales: {
-      x: { title: { display: true, text: 'Date' } },
-      y: { title: { display: true, text: 'Price (USD)' } }
-    }
-  }
-});
-
-// Fetch and update historical price chart
-async function fetchHistoricalData(days) {
-  try {
-    const response = await fetch(
-      `https://api.coingecko.com/api/v3/coins/bitcoin/market_chart?vs_currency=usd&days=${days}`
-    );
-    const data = await response.json();
-    const prices = data.prices;
-
-    // Extract dates and prices
-    const labels = prices.map(price => new Date(price[0]).toLocaleDateString());
-    const dataPoints = prices.map(price => price[1]);
-
-    updateHistoricalChart(labels, dataPoints);
-  } catch (error) {
-    console.error('Error fetching historical data:', error);
-  }
-}
-
-// Update Historical Price Chart
-function updateHistoricalChart(labels, dataPoints) {
-  historicalPriceChart.data.labels = labels;
-  historicalPriceChart.data.datasets[0].data = dataPoints;
-  historicalPriceChart.update();
-}
