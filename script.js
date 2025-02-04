@@ -3,6 +3,8 @@ let highPrice = parseFloat(localStorage.getItem('highPrice')) || null;
 let lowPrice = parseFloat(localStorage.getItem('lowPrice')) || null;
 let dailyHigh = null;
 let dailyLow = null;
+let previousPrice = null; // Track previous price for percentage change
+let predictionStartPrice = null; // Track the price when the prediction starts
 
 // Initialize Chart.js for real-time Bitcoin price trend
 const ctx = document.getElementById('priceChart').getContext('2d');
@@ -42,6 +44,13 @@ async function fetchBitcoinPrice() {
     const data = await response.json();
     const currentPrice = data.bpi.USD.rate_float;
 
+    // Calculate percentage change
+    let percentageChange = 0;
+    if (previousPrice !== null) {
+      percentageChange = ((currentPrice - previousPrice) / previousPrice) * 100;
+    }
+    previousPrice = currentPrice; // Update previous price
+
     // Update daily high and low
     dailyHigh = dailyHigh === null || currentPrice > dailyHigh ? currentPrice : dailyHigh;
     dailyLow = dailyLow === null || currentPrice < dailyLow ? currentPrice : dailyLow;
@@ -50,10 +59,15 @@ async function fetchBitcoinPrice() {
     const currentPriceElement = document.getElementById('currentPrice');
     const dailyHighElement = document.getElementById('dailyHigh');
     const dailyLowElement = document.getElementById('dailyLow');
+    const percentageChangeElement = document.getElementById('percentageChange');
 
     if (currentPriceElement) currentPriceElement.textContent = `$${currentPrice.toFixed(2)}`;
     if (dailyHighElement) dailyHighElement.textContent = `$${dailyHigh.toFixed(2)}`;
     if (dailyLowElement) dailyLowElement.textContent = `$${dailyLow.toFixed(2)}`;
+    if (percentageChangeElement) {
+      percentageChangeElement.textContent = `${percentageChange.toFixed(2)}%`;
+      percentageChangeElement.style.color = percentageChange >= 0 ? '#4caf50' : '#f44336'; // Green for positive, red for negative
+    }
 
     // Update price chart
     const timestamp = new Date().toLocaleTimeString();
@@ -160,26 +174,40 @@ document.getElementById('loadHistoricalData').addEventListener('click', function
 
 document.getElementById('predictForm').addEventListener('submit', function (e) {
   e.preventDefault();
-  const prediction = parseFloat(document.getElementById('prediction').value);
-  const currentPrice = parseFloat(document.getElementById('currentPrice').textContent.replace('$', ''));
+  const prediction = document.querySelector('input[name="prediction"]:checked').value; // Get selected radio button value
+  predictionStartPrice = parseFloat(document.getElementById('currentPrice').textContent.replace('$', '')); // Record the starting price
 
-  if (isNaN(prediction)) {
-    alert('Please enter a valid number for your prediction.');
-    return;
-  }
+  // Disable the form while waiting
+  document.getElementById('predictForm').querySelector('button').disabled = true;
 
-  const difference = Math.abs(prediction - currentPrice);
-  let resultMessage = '';
+  // Wait for 1 minute, then check the result
+  setTimeout(async () => {
+    try {
+      const response = await fetch('https://api.coindesk.com/v1/bpi/currentprice/BTC.json');
+      if (!response.ok) throw new Error('Failed to fetch Bitcoin price');
+      const data = await response.json();
+      const newPrice = data.bpi.USD.rate_float;
 
-  if (difference === 0) {
-    resultMessage = 'Perfect prediction!';
-  } else if (difference <= 10) {
-    resultMessage = 'Very close!';
-  } else {
-    resultMessage = 'Not even close. Try again!';
-  }
+      // Determine if the price went up or down
+      const actualMovement = newPrice > predictionStartPrice ? 'up' : 'down';
 
-  document.getElementById('predictionResult').textContent = resultMessage;
+      // Compare prediction with actual movement
+      let resultMessage = '';
+      if (prediction === actualMovement) {
+        resultMessage = 'You win! The price moved ' + actualMovement + '.';
+      } else {
+        resultMessage = 'You lose. The price moved ' + actualMovement + '.';
+      }
+
+      document.getElementById('predictionResult').textContent = resultMessage;
+    } catch (error) {
+      console.error('Error fetching updated Bitcoin price:', error);
+      document.getElementById('predictionResult').textContent = 'Failed to check prediction.';
+    } finally {
+      // Re-enable the form
+      document.getElementById('predictForm').querySelector('button').disabled = false;
+    }
+  }, 60000); // Wait 1 minute before checking the price
 });
 
 // Initialize on page load
