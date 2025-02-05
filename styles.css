@@ -92,3 +92,38 @@ canvas {
 .p-3 {
   padding: 1rem;
 }
+
+/* Light mode styles */
+body.light-mode {
+  background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
+  color: #333;
+}
+body.light-mode h1, body.light-mode h2 {
+  color: #2c3e50;
+}
+body.light-mode .card {
+  background-color: #fff;
+}
+body.light-mode .btn-primary {
+  background-color: #0d6efd;
+}
+
+/* Dark mode styles */
+body.dark-mode {
+  background: linear-gradient(135deg, #2c3e50, #4a4a4a);
+  color: #f5f7fa;
+}
+body.dark-mode h1, body.dark-mode h2 {
+  color: #f5f7fa;
+}
+body.dark-mode .card {
+  background-color: #333;
+}
+body.dark-mode .btn-primary {
+  background-color: #1a73e8;
+}
+.mode-toggle {
+  position: fixed;
+  top: 10px;
+  right: 10px;
+}
