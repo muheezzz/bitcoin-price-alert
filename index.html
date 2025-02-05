@@ -8,10 +8,60 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <!-- Custom CSS -->
   <link rel="stylesheet" href="styles.css">
+  <!-- Bootstrap Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.8.1/font/bootstrap-icons.min.css">
   <!-- Chart.js -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Roboto', sans-serif;
+      background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
+      color: #333;
+    }
+    h1, h2 {
+      color: #2c3e50;
+    }
+    .card {
+      border: none;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      background-color: #fff;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    }
+    .btn-primary {
+      background-color: #0d6efd;
+      border: none;
+      border-radius: 5px;
+      padding: 0.75rem 1.5rem;
+      font-size: 1rem;
+      font-weight: 600;
+      transition: background-color 0.3s ease, transform 0.2s ease;
+    }
+    .btn-primary:hover {
+      background-color: #0b5ed7;
+      transform: scale(1.05);
+    }
+    .container {
+      padding: 2rem;
+      margin-top: 2rem;
+      background: rgba(255, 255, 255, 0.8);
+      border-radius: 10px;
+    }
+  </style>
 </head>
-<body class="bg-light">
+<body>
+  <!-- Add this inside the <body> tag, preferably at the top -->
+  <div class="mode-toggle">
+    <button id="toggleMode" class="btn btn-secondary">
+      <span id="modeIcon" class="bi bi-moon"></span>
+    </button>
+  </div>
   <div class="container my-5">
     <header class="text-center mb-5">
       <h1 class="display-4 text-primary fw-bold">Mo's Bitcoin Price Tracker</h1>
@@ -119,7 +169,8 @@
         <canvas id="historicalPriceChart"></canvas>
       </div>
     </section>
-  </div>
+
+
 
   <!-- Bootstrap JS -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
