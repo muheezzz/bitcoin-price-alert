@@ -30,6 +30,34 @@ const priceChart = new Chart(ctx, {
   }
 });
 
+// Function to toggle between light and dark modes
+function toggleMode() {
+  const body = document.body;
+  const modeIcon = document.getElementById('modeIcon');
+  body.classList.toggle('dark-mode');
+  body.classList.toggle('light-mode');
+
+  if (body.classList.contains('dark-mode')) {
+    modeIcon.className = 'bi bi-sun';
+  } else {
+    modeIcon.className = 'bi bi-moon';
+  }
+}
+
+// Add event listener to the toggle button
+document.getElementById('toggleMode').addEventListener('click', toggleMode);
+
+// Set initial mode based on user preference or default to light mode
+document.addEventListener('DOMContentLoaded', () => {
+  const prefersDarkScheme = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  if (prefersDarkScheme) {
+    document.body.classList.add('dark-mode');
+    document.getElementById('modeIcon').className = 'bi bi-sun';
+  } else {
+    document.body.classList.add('light-mode');
+  }
+});
+
 // Update threshold display
 function updateThresholdDisplay() {
   document.getElementById('currentHigh').textContent = highPrice ? `$${highPrice.toFixed(2)}` : 'Not set';
