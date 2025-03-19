@@ -5,6 +5,10 @@ body {
   color: #333;
   line-height: 1.6;
 }
+/* Dogecoin Specific Styles */
+.doge-theme {
+  color: #fcbf49;
+}
 
 h1, h2 {
   color: #2c3e50; /* A more sophisticated and neutral color for headings */

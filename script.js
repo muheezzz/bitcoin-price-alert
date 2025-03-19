@@ -7,26 +7,29 @@ let previousPrice = null; // Track previous price for percentage change
 let predictionStartPrice = null; // Track the price when the prediction starts
 
 // Initialize Chart.js for real-time Bitcoin price trend
-const ctx = document.getElementById('priceChart').getContext('2d');
-const priceChart = new Chart(ctx, {
-  type: 'line',
-  data: {
-    labels: [],
-    datasets: [{
-      label: 'Bitcoin Price (USD)',
-      data: [],
-      borderColor: '#ff6f61',
-      borderWidth: 2,
-      fill: false,
-      tension: 0.1,
-    }]
-  },
-  options: {
-    responsive: true,
-    scales: {
-      x: { title: { display: true, text: 'Time' } },
-      y: { title: { display: true, text: 'Price (USD)' } }
-    }
+document.addEventListener('DOMContentLoaded', () => {
+  // Bitcoin Chart
+  const btcCtx = document.getElementById('priceChart');
+  if (btcCtx) {
+    const btcChart = new Chart(btcCtx.getContext('2d'), {
+      type: 'line',
+      data: { labels: [], datasets: [{ label: 'Bitcoin Price (USD)', data: [], borderColor: '#ff6f61', borderWidth: 2 }] },
+      options: { responsive: true, scales: { x: { title: { display: true, text: 'Time' } }, y: { title: { display: true, text: 'Price (USD)' } } } }
+    });
+    setInterval(() => fetchCryptoPrice('bitcoin', 'currentPrice', btcChart), 60000);
+    fetchCryptoPrice('bitcoin', 'currentPrice', btcChart);
+  }
+
+  // Dogecoin Chart
+  const dogeCtx = document.getElementById('priceChart');
+  if (dogeCtx) {
+    const dogeChart = new Chart(dogeCtx.getContext('2d'), {
+      type: 'line',
+      data: { labels: [], datasets: [{ label: 'Dogecoin Price (USD)', data: [], borderColor: '#fcbf49', borderWidth: 2 }] },
+      options: { responsive: true, scales: { x: { title: { display: true, text: 'Time' } }, y: { title: { display: true, text: 'Price (USD)' } } } }
+    });
+    setInterval(() => fetchCryptoPrice('dogecoin', 'currentPrice', dogeChart), 60000);
+    fetchCryptoPrice('dogecoin', 'currentPrice', dogeChart);
   }
 });
 
@@ -45,84 +48,50 @@ function toggleMode() {
 }
 
 // Add event listener to the toggle button
-document.getElementById('toggleMode')?.addEventListener('click', toggleMode);
+document.getElementById('toggleMode').addEventListener('click', toggleMode);
 
 // Set initial mode based on user preference or default to light mode
 document.addEventListener('DOMContentLoaded', () => {
   const prefersDarkScheme = window.matchMedia('(prefers-color-scheme: dark)').matches;
-  const body = document.body;
-  const modeIcon = document.getElementById('modeIcon');
-
   if (prefersDarkScheme) {
-    body.classList.add('dark-mode');
-    modeIcon?.classList.replace('bi-moon', 'bi-sun');
+    document.body.classList.add('dark-mode');
+    document.getElementById('modeIcon').className = 'bi bi-sun';
   } else {
-    body.classList.add('light-mode');
-    modeIcon?.classList.replace('bi-sun', 'bi-moon');
+    document.body.classList.add('light-mode');
   }
 });
 
 // Update threshold display
 function updateThresholdDisplay() {
-  const currentHighElement = document.getElementById('currentHigh');
-  const currentLowElement = document.getElementById('currentLow');
-
-  if (currentHighElement) {
-    currentHighElement.textContent = highPrice ? `$${highPrice.toFixed(2)}` : 'Not set';
-  }
-  if (currentLowElement) {
-    currentLowElement.textContent = lowPrice ? `$${lowPrice.toFixed(2)}` : 'Not set';
-  }
+  document.getElementById('currentHigh').textContent = highPrice ? `$${highPrice.toFixed(2)}` : 'Not set';
+  document.getElementById('currentLow').textContent = lowPrice ? `$${lowPrice.toFixed(2)}` : 'Not set';
 }
 
 // Fetch Bitcoin price and update the chart
-async function fetchBitcoinPrice() {
+async function fetchCryptoPrice(cryptoId, priceElementId, chart) {
   try {
-    const response = await fetch('https://api.coindesk.com/v1/bpi/currentprice/BTC.json');
-    if (!response.ok) throw new Error('Failed to fetch Bitcoin price');
+    const response = await fetch(`https://api.coingecko.com/api/v3/simple/price?ids=${cryptoId}&vs_currencies=usd`);
+    if (!response.ok) throw new Error(`Failed to fetch ${cryptoId} price`);
     const data = await response.json();
-    const currentPrice = data.bpi.USD.rate_float;
+    const currentPrice = data[cryptoId].usd;
 
-    // Calculate percentage change
-    const percentageChange = previousPrice !== null
-      ? ((currentPrice - previousPrice) / previousPrice) * 100
-      : 0;
-    previousPrice = currentPrice; // Update previous price
+    // Update Price on the Page
+    document.getElementById(priceElementId).textContent = `$${currentPrice.toFixed(4)}`;
 
-    // Update daily high and low
-    dailyHigh = dailyHigh === null || currentPrice > dailyHigh ? currentPrice : dailyHigh;
-    dailyLow = dailyLow === null || currentPrice < dailyLow ? currentPrice : dailyLow;
-
-    // Update DOM elements
-    const currentPriceElement = document.getElementById('currentPrice');
-    const dailyHighElement = document.getElementById('dailyHigh');
-    const dailyLowElement = document.getElementById('dailyLow');
-    const percentageChangeElement = document.getElementById('percentageChange');
-
-    if (currentPriceElement) currentPriceElement.textContent = `$${currentPrice.toFixed(2)}`;
-    if (dailyHighElement) dailyHighElement.textContent = `$${dailyHigh.toFixed(2)}`;
-    if (dailyLowElement) dailyLowElement.textContent = `$${dailyLow.toFixed(2)}`;
-    if (percentageChangeElement) {
-      percentageChangeElement.textContent = `${percentageChange.toFixed(2)}%`;
-      percentageChangeElement.style.color = percentageChange >= 0 ? '#4caf50' : '#f44336'; // Green for positive, red for negative
-    }
-
-    // Update price chart
+    // Update Chart
     const timestamp = new Date().toLocaleTimeString();
-    priceChart.data.labels.push(timestamp);
-    priceChart.data.datasets[0].data.push(currentPrice);
+    chart.data.labels.push(timestamp);
+    chart.data.datasets[0].data.push(currentPrice);
 
-    // Keep only the last 10 data points
-    if (priceChart.data.labels.length > 10) {
-      priceChart.data.labels.shift();
-      priceChart.data.datasets[0].data.shift();
+    if (chart.data.labels.length > 10) {
+      chart.data.labels.shift();
+      chart.data.datasets[0].data.shift();
     }
-
-    priceChart.update();
+    
+    chart.update();
   } catch (error) {
-    console.error('Error fetching Bitcoin price:', error);
-    const currentPriceElement = document.getElementById('currentPrice');
-    if (currentPriceElement) currentPriceElement.textContent = 'Failed to load price';
+    console.error(`Error fetching ${cryptoId} price:`, error);
+    document.getElementById(priceElementId).textContent = 'Failed to load price';
   }
 }
 
