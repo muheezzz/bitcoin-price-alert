@@ -9,7 +9,7 @@ let predictionStartPrice = null; // Track the price when the prediction starts
 // Initialize Chart.js for real-time Bitcoin price trend
 document.addEventListener('DOMContentLoaded', () => {
   // Bitcoin Chart
-  const btcCtx = document.getElementById('priceChart');
+  const btcCtx = document.getElementById('btcPriceChart');
   if (btcCtx) {
     const btcChart = new Chart(btcCtx.getContext('2d'), {
       type: 'line',
@@ -21,15 +21,15 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // Dogecoin Chart
-  const dogeCtx = document.getElementById('priceChart');
+  const dogeCtx = document.getElementById('dogePriceChart');
   if (dogeCtx) {
     const dogeChart = new Chart(dogeCtx.getContext('2d'), {
       type: 'line',
       data: { labels: [], datasets: [{ label: 'Dogecoin Price (USD)', data: [], borderColor: '#fcbf49', borderWidth: 2 }] },
       options: { responsive: true, scales: { x: { title: { display: true, text: 'Time' } }, y: { title: { display: true, text: 'Price (USD)' } } } }
     });
-    setInterval(() => fetchCryptoPrice('dogecoin', 'currentPrice', dogeChart), 60000);
-    fetchCryptoPrice('dogecoin', 'currentPrice', dogeChart);
+    setInterval(() => fetchCryptoPrice('dogecoin', 'dogeCurrentPrice', dogeChart), 60000);
+    fetchCryptoPrice('dogecoin', 'dogeCurrentPrice', dogeChart);
   }
 });
 
@@ -67,31 +67,40 @@ function updateThresholdDisplay() {
   document.getElementById('currentLow').textContent = lowPrice ? `$${lowPrice.toFixed(2)}` : 'Not set';
 }
 
-// Fetch Bitcoin price and update the chart
 async function fetchCryptoPrice(cryptoId, priceElementId, chart) {
   try {
     const response = await fetch(`https://api.coingecko.com/api/v3/simple/price?ids=${cryptoId}&vs_currencies=usd`);
     if (!response.ok) throw new Error(`Failed to fetch ${cryptoId} price`);
+
     const data = await response.json();
     const currentPrice = data[cryptoId].usd;
 
-    // Update Price on the Page
-    document.getElementById(priceElementId).textContent = `$${currentPrice.toFixed(4)}`;
+    // Ensure the element exists before updating
+    let priceElement = document.getElementById(priceElementId);
+    if (priceElement) {
+      priceElement.textContent = `$${currentPrice.toFixed(4)}`;
+    } else {
+      console.error(`Element with ID ${priceElementId} not found.`);
+    }
 
     // Update Chart
-    const timestamp = new Date().toLocaleTimeString();
-    chart.data.labels.push(timestamp);
-    chart.data.datasets[0].data.push(currentPrice);
+    if (chart) {
+      const timestamp = new Date().toLocaleTimeString();
+      chart.data.labels.push(timestamp);
+      chart.data.datasets[0].data.push(currentPrice);
 
-    if (chart.data.labels.length > 10) {
-      chart.data.labels.shift();
-      chart.data.datasets[0].data.shift();
+      if (chart.data.labels.length > 10) {
+        chart.data.labels.shift();
+        chart.data.datasets[0].data.shift();
+      }
+      chart.update();
     }
-    
-    chart.update();
   } catch (error) {
     console.error(`Error fetching ${cryptoId} price:`, error);
-    document.getElementById(priceElementId).textContent = 'Failed to load price';
+    let priceElement = document.getElementById(priceElementId);
+    if (priceElement) {
+      priceElement.textContent = 'Failed to load price';
+    }
   }
 }
 
