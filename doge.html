@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
   <nav class="mb-4">
-    <a href="index.html" class="btn btn-primary">Back to Bitcoin</a>
-  </nav>
+    <a href="index.html" class="btn btn-primary">Bitcoin Tracker</a>
+    
+  </nav>  
   
-
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -14,13 +14,11 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <link rel="stylesheet" href="styles.css">
 </head>
-<canvas id="dogePriceChart"></canvas>
-<p>Dogecoin Price: <span id="dogeCurrentPrice">Loading...</span></p>
 <body>
+  <button id="toggleMode" class="btn btn-secondary mode-toggle">
+    <span id="modeIcon" class="bi bi-moon"></span>
+  </button>
   <div class="container">
-    <button id="toggleMode" class="btn btn-secondary mode-toggle">
-      <span id="modeIcon" class="bi bi-moon"></span>
-    </button>
     <header class="text-center mb-4">
       <h1 class="display-5 text-primary">Dogecoin Price Tracker</h1>
       <p class="lead text-secondary">Track Dogecoin prices in real-time!</p>
